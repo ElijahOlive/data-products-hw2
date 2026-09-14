@@ -357,19 +357,46 @@ display: none;
 <h3>Image Compression Function</h3>
 <pre class="r"><code>library(readr)
 
-# Because the image is in the exact same folder as this index.Rmd file,
-# you don&#39;t need a folder path!
-x &lt;- read_csv(&quot;image1.csv&quot;)</code></pre>
-<pre><code>## Rows: 1000 Columns: 100
-## ── Column specification ────────────────────────────────────────────────────────
-## Delimiter: &quot;,&quot;
-## dbl (100): X1, X2, X3, X4, X5, X6, X7, X8, X9, X10, X11, X12, X13, X14, X15,...
-## 
-## ℹ Use `spec()` to retrieve the full column specification for this data.
-## ℹ Specify the column types or set `show_col_types = FALSE` to quiet this message.</code></pre>
-<pre class="r"><code>x &lt;- data.matrix(x)
+compress_image &lt;- function(img_matrix, k) {
+  # 1. Calculate the cross product V = X&#39;X
+  V &lt;- t(img_matrix) %*% img_matrix
+  
+  # 2. Get the eigendecomposition of V 
+  # U becomes our matrix of eigenvectors
+  decomp &lt;- eigen(V)
+  U &lt;- decomp$vectors
+  
+  # 3. Calculate the principal component scores (Z = XU)
+  Z &lt;- img_matrix %*% U
+  
+  # 4. Create the rank k approximation
+  # We subset the first k columns of Z and U
+  Z_k &lt;- Z[, 1:k, drop = FALSE]
+  U_k &lt;- U[, 1:k, drop = FALSE]
+  
+  # X^(k) = Z_k * U_k&#39;
+  X_k &lt;- Z_k %*% t(U_k)
+  
+  # 5. Calculate the Frobenius norm error
+  approx_error &lt;- norm(img_matrix - X_k, type = &quot;F&quot;)
+  
+  # 6. Return both pieces of data as a list
+  return(list(
+    approximation = X_k,
+    error = approx_error
+  ))
+}
 
-# Next step: Define the compress_image function here!</code></pre>
+# Load the first image to test
+x &lt;- read_csv(&quot;image1.csv&quot;)
+x &lt;- data.matrix(x)
+
+# Test the function with a k value of 10
+test_run &lt;- compress_image(x, 10)
+
+# Print the error to see if it worked!
+print(test_run$error)</code></pre>
+<pre><code>## [1] 290.5597</code></pre>
 </div>
 
 
