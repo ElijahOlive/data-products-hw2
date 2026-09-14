@@ -1,0 +1,49 @@
+---
+title: "PCA Image Compression"
+output: html_document
+---
+
+### Image Compression Function
+
+```{r, message=FALSE, warning=FALSE}
+library(readr)
+
+compress_image <- function(img_matrix, k) {
+  # 1. Calculate the cross product V = X'X
+  V <- t(img_matrix) %*% img_matrix
+  
+  # 2. Get the eigendecomposition of V 
+  # U becomes our matrix of eigenvectors
+  decomp <- eigen(V)
+  U <- decomp$vectors
+  
+  # 3. Calculate the principal component scores (Z = XU)
+  Z <- img_matrix %*% U
+  
+  # 4. Create the rank k approximation
+  # We subset the first k columns of Z and U
+  Z_k <- Z[, 1:k, drop = FALSE]
+  U_k <- U[, 1:k, drop = FALSE]
+  
+  # X^(k) = Z_k * U_k'
+  X_k <- Z_k %*% t(U_k)
+  
+  # 5. Calculate the Frobenius norm error
+  approx_error <- norm(img_matrix - X_k, type = "F")
+  
+  # 6. Return both pieces of data as a list
+  return(list(
+    approximation = X_k,
+    error = approx_error
+  ))
+}
+
+# Load the first image to test
+x <- read_csv("image1.csv")
+x <- data.matrix(x)
+
+# Test the function with a k value of 10
+test_run <- compress_image(x, 10)
+
+# Print the error to see if it worked!
+print(test_run$error)
