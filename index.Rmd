@@ -47,3 +47,54 @@ test_run <- compress_image(x, 10)
 
 # Print the error to see if it worked!
 print(test_run$error)
+
+
+
+
+
+# --- HELPER FUNCTION TO DRAW IMAGES ---
+# R draws matrices sideways by default; this transposes and flips it upright
+draw_image <- function(mat, plot_title) {
+  image(t(mat)[, nrow(mat):1], col = gray.colors(256), main = plot_title, axes = FALSE)
+}
+
+# ==========================================
+# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
+# ==========================================
+
+# Set up a grid layout to show 12 smaller images at once (3 rows, 4 columns)
+par(mfrow = c(3, 4)) 
+par(mar = c(1, 1, 2, 1)) # Shrink the margins so they fit nicely
+
+# Draw the original image first
+draw_image(x, "Original Image")
+
+# Loop through k = 1 to 10 and draw each compressed version
+for (k_val in 1:10) {
+  result <- compress_image(x, k_val)
+  draw_image(result$approximation, paste("k =", k_val))
+}
+
+
+# ==========================================
+# REQUIREMENT 2: PLOT ERROR VS. K
+# ==========================================
+
+# Find the maximum possible k (which is the total number of columns in the image)
+max_k <- ncol(x)
+errors <- numeric(max_k) # Create an empty vector to store the errors
+
+# Loop through every possible k and save the error
+for (k_val in 1:max_k) {
+  errors[k_val] <- compress_image(x, k_val)$error
+}
+
+# Reset the plot layout to a single, normal-sized graph
+par(mfrow = c(1, 1)) 
+par(mar = c(5, 4, 4, 2) + 0.1) # Reset to default margins
+
+# Draw the line plot
+plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
+     xlab = "k (Rank of Approximation)", 
+     ylab = "Frobenius Error", 
+     main = "Image 1: Approximation Error vs. k")
