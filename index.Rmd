@@ -126,3 +126,203 @@ plot(first_eigenvector, type = "l", col = "red", lwd = 2, main = "First Eigenvec
 # Plot the PC Score
 plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2, main = "First PC Score", xlab = "Row Index", ylab = "Score")
 ```
+
+```r
+Image 1 Interpretation
+
+Eigenvector & PC Score: [Type your explanation of the Image 1 plots here]
+
+Sufficiently Good k: [State your chosen k for Image 1 and why here]
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+# Load the second image
+x <- read_csv("image2.csv")
+x <- data.matrix(x)
+
+# ==========================================
+# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
+# ==========================================
+par(mfrow = c(3, 4))
+par(mar = c(1, 1, 2, 1))
+
+draw_image(x, "Original Image 2")
+
+for (k_val in 1:10) {
+result <- compress_image(x, k_val)
+draw_image(result$approximation, paste("k =", k_val))
+}
+
+# ==========================================
+# REQUIREMENT 2: PLOT ERROR VS. K
+# ==========================================
+max_k <- ncol(x)
+errors <- numeric(max_k)
+
+for (k_val in 1:max_k) {
+errors[k_val] <- compress_image(x, k_val)$error
+}
+
+par(mfrow = c(1, 1))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
+xlab = "k (Rank of Approximation)",
+ylab = "Frobenius Error",
+main = "Image 2: Approximation Error vs. k")
+
+# ==========================================
+# REQUIREMENT 3: EIGENVECTOR & PC SCORE
+# ==========================================
+V <- t(x) %*% x
+U <- eigen(V)$vectors
+
+first_eigenvector <- U[, 1]
+first_pc_score <- (x %*% U)[, 1]
+
+par(mfrow = c(1, 2))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(first_eigenvector, type = "l", col = "red", lwd = 2,
+main = "Image 2: First Eigenvector", xlab = "Column Index", ylab = "Value")
+
+plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
+main = "Image 2: First PC Score", xlab = "Row Index", ylab = "Score")
+```
+
+```r
+Image 2 Interpretation
+
+Eigenvector & PC Score: [Type your explanation of the Image 2 plots here]
+
+Sufficiently Good k: [State your chosen k for Image 2 and why here]
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+# Load the third image
+x <- read_csv("image3.csv")
+x <- data.matrix(x)
+
+# ==========================================
+# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
+# ==========================================
+par(mfrow = c(3, 4))
+par(mar = c(1, 1, 2, 1))
+
+draw_image(x, "Original Image 3")
+
+for (k_val in 1:10) {
+result <- compress_image(x, k_val)
+draw_image(result$approximation, paste("k =", k_val))
+}
+
+# ==========================================
+# REQUIREMENT 2: PLOT ERROR VS. K
+# ==========================================
+max_k <- ncol(x)
+errors <- numeric(max_k)
+
+for (k_val in 1:max_k) {
+errors[k_val] <- compress_image(x, k_val)$error
+}
+
+par(mfrow = c(1, 1))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
+xlab = "k (Rank of Approximation)",
+ylab = "Frobenius Error",
+main = "Image 3: Approximation Error vs. k")
+
+# ==========================================
+# REQUIREMENT 3: EIGENVECTOR & PC SCORE
+# ==========================================
+V <- t(x) %*% x
+U <- eigen(V)$vectors
+
+first_eigenvector <- U[, 1]
+first_pc_score <- (x %*% U)[, 1]
+
+par(mfrow = c(1, 2))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(first_eigenvector, type = "l", col = "red", lwd = 2,
+main = "Image 3: First Eigenvector", xlab = "Column Index", ylab = "Value")
+
+plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
+main = "Image 3: First PC Score", xlab = "Row Index", ylab = "Score")
+```
+
+```r
+Image 3 Interpretation
+
+Eigenvector & PC Score: [Type your explanation of the Image 3 plots here]
+
+Sufficiently Good k: [State your chosen k for Image 3 and why here]
+```
+
+```{r, message=FALSE, warning=FALSE}
+
+# Load the fourth image
+x <- read_csv("image4.csv")
+x <- data.matrix(x)
+
+# ==========================================
+# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
+# ==========================================
+par(mfrow = c(3, 4))
+par(mar = c(1, 1, 2, 1))
+
+draw_image(x, "Original Image 4")
+
+for (k_val in 1:10) {
+result <- compress_image(x, k_val)
+draw_image(result$approximation, paste("k =", k_val))
+}
+
+# ==========================================
+# REQUIREMENT 2: PLOT ERROR VS. K
+# ==========================================
+max_k <- ncol(x)
+errors <- numeric(max_k)
+
+for (k_val in 1:max_k) {
+errors[k_val] <- compress_image(x, k_val)$error
+}
+
+par(mfrow = c(1, 1))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
+xlab = "k (Rank of Approximation)",
+ylab = "Frobenius Error",
+main = "Image 4: Approximation Error vs. k")
+
+# ==========================================
+# REQUIREMENT 3: EIGENVECTOR & PC SCORE
+# ==========================================
+V <- t(x) %*% x
+U <- eigen(V)$vectors
+
+first_eigenvector <- U[, 1]
+first_pc_score <- (x %*% U)[, 1]
+
+par(mfrow = c(1, 2))
+par(mar = c(5, 4, 4, 2) + 0.1)
+
+plot(first_eigenvector, type = "l", col = "red", lwd = 2,
+main = "Image 4: First Eigenvector", xlab = "Column Index", ylab = "Value")
+
+plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
+main = "Image 4: First PC Score", xlab = "Row Index", ylab = "Score")
+```
+
+```r
+Image 4 Interpretation
+
+Eigenvector & PC Score: [Type your explanation of the Image 4 plots here]
+
+Sufficiently Good k: [State your chosen k for Image 4 and why here]
+```
