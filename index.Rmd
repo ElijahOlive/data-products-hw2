@@ -3,25 +3,36 @@ title: "PCA Image Compression"
 output: html_document
 ---
 
-### Image Compression Function
-
-```{r, message=FALSE, warning=FALSE}
+```{r setup, include=FALSE}
 library(readr)
 
+# Helper function for displaying image matrices
+draw_image <- function(mat, plot_title) {
+  image(
+    t(mat)[, nrow(mat):1],
+    col = gray.colors(256),
+    main = plot_title,
+    axes = FALSE
+  )
+}
+```
+
+
+### Image Compression Function
+
+```{r compression-function, message=FALSE, warning=FALSE}
 compress_image <- function(img_matrix, k) {
   # 1. Calculate the cross product V = X'X
   V <- t(img_matrix) %*% img_matrix
   
-  # 2. Get the eigendecomposition of V 
-  # U becomes our matrix of eigenvectors
+  # 2. Get the eigendecomposition of V (U becomes our matrix of eigenvectors)
   decomp <- eigen(V)
   U <- decomp$vectors
   
   # 3. Calculate the principal component scores (Z = XU)
   Z <- img_matrix %*% U
-  
-  # 4. Create the rank k approximation
-  # We subset the first k columns of Z and U
+
+  # 4. Create the rank k approximation. We subset the first k columns of Z and U
   Z_k <- Z[, 1:k, drop = FALSE]
   U_k <- U[, 1:k, drop = FALSE]
   
@@ -30,151 +41,147 @@ compress_image <- function(img_matrix, k) {
   
   # 5. Calculate the Frobenius norm error
   approx_error <- norm(img_matrix - X_k, type = "F")
-  
+
   # 6. Return both pieces of data as a list
   return(list(
     approximation = X_k,
     error = approx_error
   ))
 }
+```
 
-# Load the first image to test
-x <- read_csv("image1.csv")
+# Image 1
+
+## Original Image and First 10 Approximations
+
+```{r image1-approximations, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=8}
+x <- read_csv("image1.csv", show_col_types = FALSE)
 x <- data.matrix(x)
 
-# Test the function with a k value of 10
-test_run <- compress_image(x, 10)
+par(mfrow = c(3, 4))
+par(mar = c(1, 1, 2, 1))
 
-# Print the error to see if it worked!
-print(test_run$error)
-
-
-
-
-
-# --- HELPER FUNCTION TO DRAW IMAGES ---
-# R draws matrices sideways by default; this transposes and flips it upright
-draw_image <- function(mat, plot_title) {
-  image(t(mat)[, nrow(mat):1], col = gray.colors(256), main = plot_title, axes = FALSE)
-}
-
-# ==========================================
-# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
-# ==========================================
-
-# Set up a grid layout to show 12 smaller images at once (3 rows, 4 columns)
-par(mfrow = c(3, 4)) 
-par(mar = c(1, 1, 2, 1)) # Shrink the margins so they fit nicely
-
-# Draw the original image first
 draw_image(x, "Original Image")
 
-# Loop through k = 1 to 10 and draw each compressed version
 for (k_val in 1:10) {
   result <- compress_image(x, k_val)
   draw_image(result$approximation, paste("k =", k_val))
 }
+```
 
+## Approximation Error
 
-# ==========================================
-# REQUIREMENT 2: PLOT ERROR VS. K
-# ==========================================
-
-# Find the maximum possible k (which is the total number of columns in the image)
+```{r image1-error, echo=FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
 max_k <- ncol(x)
-errors <- numeric(max_k) # Create an empty vector to store the errors
+errors <- numeric(max_k)
 
-# Loop through every possible k and save the error
 for (k_val in 1:max_k) {
   errors[k_val] <- compress_image(x, k_val)$error
 }
 
-# Reset the plot layout to a single, normal-sized graph
-par(mfrow = c(1, 1)) 
-par(mar = c(5, 4, 4, 2) + 0.1) # Reset to default margins
+par(mfrow = c(1, 1))
+par(mar = c(5, 4, 4, 2) + 0.1)
 
-# Draw the line plot
-plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
-     xlab = "k (Rank of Approximation)", 
-     ylab = "Frobenius Error", 
-     main = "Image 1: Approximation Error vs. k")
-
-
+plot(
+  1:max_k, errors,
+  type = "b",
+  col = "blue",
+  pch = 16,
+  xlab = "k (Rank of Approximation)",
+  ylab = "Frobenius Error",
+  main = "Image 1: Approximation Error vs. k"
+)
 ```
 
-```{r, message=FALSE, warning=FALSE}
-# ==========================================
-# REQUIREMENT 3: EIGENVECTOR & PC SCORE
-# ==========================================
-# Run the eigendecomposition on the original matrix
+## First Eigenvector and First PC Score
+
+```{r image1-pca, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=5}
 V <- t(x) %*% x
 U <- eigen(V)$vectors
 
-# Isolate the first eigenvector (the first column of U)
 first_eigenvector <- U[, 1]
-
-# Calculate the first PC score (the first column of Z = XU)
 first_pc_score <- (x %*% U)[, 1]
 
-# Set layout to side-by-side
 par(mfrow = c(1, 2))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-# Plot the Eigenvector
-plot(first_eigenvector, type = "l", col = "red", lwd = 2, main = "First Eigenvector", xlab = "Column Index", ylab = "Value")
+plot(
+  first_eigenvector,
+  type = "l",
+  col = "red",
+  lwd = 2,
+  main = "Image 1: First Eigenvector",
+  xlab = "Column Index",
+  ylab = "Value"
+)
 
-# Plot the PC Score
-plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2, main = "First PC Score", xlab = "Row Index", ylab = "Score")
+plot(
+  first_pc_score,
+  type = "l",
+  col = "darkgreen",
+  lwd = 2,
+  main = "Image 1: First PC Score",
+  xlab = "Row Index",
+  ylab = "Score"
+)
 ```
 
-```r
-Image 1 Interpretation
+### Interpretation
 
-Eigenvector & PC Score: [Type your explanation of the Image 1 plots here]
+**Eigenvector & PC Score:**  
+The first eigenvector is close to zero for most column positions but has a very large spike near column 80. This indicates that the dominant principal component is mostly associated with the strong vertical feature near that location in the original image. The first PC score varies around a fairly constant level across the rows, with smaller fluctuations caused by the noise in the image. Together, the first eigenvector and first PC score capture the main vertical feature, while the random texture requires many additional principal components.
 
-Sufficiently Good k: [State your chosen k for Image 1 and why here]
-```
+**Sufficiently Good \(k\):**  
+I would choose approximately \(k = 90\) for Image 1. The image contains a large amount of fine, noise-like texture, so the low-rank approximations capture the main vertical line but do not reproduce most of the texture. The approximation error also decreases gradually across almost the entire range of possible values of \(k\), rather than having a strong early elbow. Therefore, a relatively high rank is needed before the approximation becomes close to the original.
 
-```{r, message=FALSE, warning=FALSE}
+### --------------------------------------------------------------------------------
 
-# Load the second image
-x <- read_csv("image2.csv")
+# Image 2
+
+## Original Image and First 10 Approximations
+
+```{r image2-approximations, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=8}
+x <- read_csv("image2.csv", show_col_types = FALSE)
 x <- data.matrix(x)
 
-# ==========================================
-# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
-# ==========================================
 par(mfrow = c(3, 4))
 par(mar = c(1, 1, 2, 1))
 
-draw_image(x, "Original Image 2")
+draw_image(x, "Original Image")
 
 for (k_val in 1:10) {
-result <- compress_image(x, k_val)
-draw_image(result$approximation, paste("k =", k_val))
+  result <- compress_image(x, k_val)
+  draw_image(result$approximation, paste("k =", k_val))
 }
+```
 
-# ==========================================
-# REQUIREMENT 2: PLOT ERROR VS. K
-# ==========================================
+## Approximation Error
+
+```{r image2-error, echo=FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
 max_k <- ncol(x)
 errors <- numeric(max_k)
 
 for (k_val in 1:max_k) {
-errors[k_val] <- compress_image(x, k_val)$error
+  errors[k_val] <- compress_image(x, k_val)$error
 }
 
 par(mfrow = c(1, 1))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
-xlab = "k (Rank of Approximation)",
-ylab = "Frobenius Error",
-main = "Image 2: Approximation Error vs. k")
+plot(
+  1:max_k, errors,
+  type = "b",
+  col = "blue",
+  pch = 16,
+  xlab = "k (Rank of Approximation)",
+  ylab = "Frobenius Error",
+  main = "Image 2: Approximation Error vs. k"
+)
+```
 
-# ==========================================
-# REQUIREMENT 3: EIGENVECTOR & PC SCORE
-# ==========================================
+## First Eigenvector and First PC Score
+
+```{r image2-pca, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=5}
 V <- t(x) %*% x
 U <- eigen(V)$vectors
 
@@ -184,61 +191,83 @@ first_pc_score <- (x %*% U)[, 1]
 par(mfrow = c(1, 2))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(first_eigenvector, type = "l", col = "red", lwd = 2,
-main = "Image 2: First Eigenvector", xlab = "Column Index", ylab = "Value")
+plot(
+  first_eigenvector,
+  type = "l",
+  col = "red",
+  lwd = 2,
+  main = "Image 2: First Eigenvector",
+  xlab = "Column Index",
+  ylab = "Value"
+)
 
-plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
-main = "Image 2: First PC Score", xlab = "Row Index", ylab = "Score")
+plot(
+  first_pc_score,
+  type = "l",
+  col = "darkgreen",
+  lwd = 2,
+  main = "Image 2: First PC Score",
+  xlab = "Row Index",
+  ylab = "Score"
+)
 ```
 
-```r
-Image 2 Interpretation
+### Interpretation
 
-Eigenvector & PC Score: [Type your explanation of the Image 2 plots here]
+**Eigenvector & PC Score:**  
+The first eigenvector changes smoothly across the columns, approximately following a steady trend from one side of the image to the other. In contrast, the first PC score changes rapidly across the rows. This is consistent with the strong horizontal bands visible in the image, because most of the variation occurs from one row to another. The first principal component therefore captures most of the overall horizontal stripe pattern.
 
-Sufficiently Good k: [State your chosen k for Image 2 and why here]
-```
+**Sufficiently Good \(k\):**  
+I would choose \(k = 2\) for Image 2. The approximation error falls from about 2 at \(k = 1\) to essentially zero at \(k = 2\), and the \(k = 2\) approximation is visually indistinguishable from the original image. Increasing \(k\) beyond 2 therefore provides essentially no improvement.
 
-```{r, message=FALSE, warning=FALSE}
+### --------------------------------------------------------------------------------
 
-# Load the third image
-x <- read_csv("image3.csv")
+# Image 3
+
+## Original Image and First 10 Approximations
+
+```{r image3-approximations, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=8}
+x <- read_csv("image3.csv", show_col_types = FALSE)
 x <- data.matrix(x)
 
-# ==========================================
-# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
-# ==========================================
 par(mfrow = c(3, 4))
 par(mar = c(1, 1, 2, 1))
 
-draw_image(x, "Original Image 3")
+draw_image(x, "Original Image")
 
 for (k_val in 1:10) {
-result <- compress_image(x, k_val)
-draw_image(result$approximation, paste("k =", k_val))
+  result <- compress_image(x, k_val)
+  draw_image(result$approximation, paste("k =", k_val))
 }
+```
 
-# ==========================================
-# REQUIREMENT 2: PLOT ERROR VS. K
-# ==========================================
+## Approximation Error
+
+```{r image3-error, echo=FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
 max_k <- ncol(x)
 errors <- numeric(max_k)
 
 for (k_val in 1:max_k) {
-errors[k_val] <- compress_image(x, k_val)$error
+  errors[k_val] <- compress_image(x, k_val)$error
 }
 
 par(mfrow = c(1, 1))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
-xlab = "k (Rank of Approximation)",
-ylab = "Frobenius Error",
-main = "Image 3: Approximation Error vs. k")
+plot(
+  1:max_k, errors,
+  type = "b",
+  col = "blue",
+  pch = 16,
+  xlab = "k (Rank of Approximation)",
+  ylab = "Frobenius Error",
+  main = "Image 3: Approximation Error vs. k"
+)
+```
 
-# ==========================================
-# REQUIREMENT 3: EIGENVECTOR & PC SCORE
-# ==========================================
+## First Eigenvector and First PC Score
+
+```{r image3-pca, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=5}
 V <- t(x) %*% x
 U <- eigen(V)$vectors
 
@@ -248,61 +277,83 @@ first_pc_score <- (x %*% U)[, 1]
 par(mfrow = c(1, 2))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(first_eigenvector, type = "l", col = "red", lwd = 2,
-main = "Image 3: First Eigenvector", xlab = "Column Index", ylab = "Value")
+plot(
+  first_eigenvector,
+  type = "l",
+  col = "red",
+  lwd = 2,
+  main = "Image 3: First Eigenvector",
+  xlab = "Column Index",
+  ylab = "Value"
+)
 
-plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
-main = "Image 3: First PC Score", xlab = "Row Index", ylab = "Score")
+plot(
+  first_pc_score,
+  type = "l",
+  col = "darkgreen",
+  lwd = 2,
+  main = "Image 3: First PC Score",
+  xlab = "Row Index",
+  ylab = "Score"
+)
 ```
 
-```r
-Image 3 Interpretation
+### Interpretation
 
-Eigenvector & PC Score: [Type your explanation of the Image 3 plots here]
+**Eigenvector & PC Score:**  
+The first eigenvector varies smoothly across the columns and contains several broad peaks and valleys. These changes represent large-scale horizontal patterns in the image rather than individual fine details. The first PC score also changes smoothly across the rows, with a large peak over a central range of rows and lower values elsewhere. This indicates that the first principal component captures major regions of contrast associated with the cat and the background. Additional principal components gradually add the smaller details needed to make the cat sharper and more recognizable.
 
-Sufficiently Good k: [State your chosen k for Image 3 and why here]
-```
+**Sufficiently Good \(k\):**  
+I would choose \(k = 10\) for Image 3. At small values such as \(k = 1\) or \(k = 2\), only the broad structure of the image is visible. By \(k = 8\) to \(k = 10\), the cat, its face, body, and surrounding background are clearly recognizable. The error curve also drops very rapidly for the first several principal components and then decreases more gradually, showing diminishing returns as additional components are added.
 
-```{r, message=FALSE, warning=FALSE}
+### --------------------------------------------------------------------------------
 
-# Load the fourth image
-x <- read_csv("image4.csv")
+# Image 4
+
+## Original Image and First 10 Approximations
+
+```{r image4-approximations, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=8}
+x <- read_csv("image4.csv", show_col_types = FALSE)
 x <- data.matrix(x)
 
-# ==========================================
-# REQUIREMENT 1: PLOT 10 APPROXIMATIONS
-# ==========================================
 par(mfrow = c(3, 4))
 par(mar = c(1, 1, 2, 1))
 
-draw_image(x, "Original Image 4")
+draw_image(x, "Original Image")
 
 for (k_val in 1:10) {
-result <- compress_image(x, k_val)
-draw_image(result$approximation, paste("k =", k_val))
+  result <- compress_image(x, k_val)
+  draw_image(result$approximation, paste("k =", k_val))
 }
+```
 
-# ==========================================
-# REQUIREMENT 2: PLOT ERROR VS. K
-# ==========================================
+## Approximation Error
+
+```{r image4-error, echo=FALSE, message=FALSE, warning=FALSE, fig.width=9, fig.height=6}
 max_k <- ncol(x)
 errors <- numeric(max_k)
 
 for (k_val in 1:max_k) {
-errors[k_val] <- compress_image(x, k_val)$error
+  errors[k_val] <- compress_image(x, k_val)$error
 }
 
 par(mfrow = c(1, 1))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(1:max_k, errors, type = "b", col = "blue", pch = 16,
-xlab = "k (Rank of Approximation)",
-ylab = "Frobenius Error",
-main = "Image 4: Approximation Error vs. k")
+plot(
+  1:max_k, errors,
+  type = "b",
+  col = "blue",
+  pch = 16,
+  xlab = "k (Rank of Approximation)",
+  ylab = "Frobenius Error",
+  main = "Image 1: Approximation Error vs. k"
+)
+```
 
-# ==========================================
-# REQUIREMENT 3: EIGENVECTOR & PC SCORE
-# ==========================================
+## First Eigenvector and First PC Score
+
+```{r image4-pca, echo=FALSE, message=FALSE, warning=FALSE, fig.width=10, fig.height=5}
 V <- t(x) %*% x
 U <- eigen(V)$vectors
 
@@ -312,17 +363,31 @@ first_pc_score <- (x %*% U)[, 1]
 par(mfrow = c(1, 2))
 par(mar = c(5, 4, 4, 2) + 0.1)
 
-plot(first_eigenvector, type = "l", col = "red", lwd = 2,
-main = "Image 4: First Eigenvector", xlab = "Column Index", ylab = "Value")
+plot(
+  first_eigenvector,
+  type = "l",
+  col = "red",
+  lwd = 2,
+  main = "Image 4: First Eigenvector",
+  xlab = "Column Index",
+  ylab = "Value"
+)
 
-plot(first_pc_score, type = "l", col = "darkgreen", lwd = 2,
-main = "Image 4: First PC Score", xlab = "Row Index", ylab = "Score")
+plot(
+  first_pc_score,
+  type = "l",
+  col = "darkgreen",
+  lwd = 2,
+  main = "Image 4: First PC Score",
+  xlab = "Row Index",
+  ylab = "Score"
+)
 ```
 
-```r
-Image 4 Interpretation
+### Interpretation
 
-Eigenvector & PC Score: [Type your explanation of the Image 4 plots here]
+**Eigenvector & PC Score:**  
+The first eigenvector has a large change in magnitude around the middle portion of the columns, showing that this region contributes strongly to the dominant pattern in the image. The first PC score contains several broad changes across the rows, including a particularly large change around the middle-to-lower part of the image. These patterns show that the first principal component is capturing the major light and dark regions of the scene. Additional principal components are needed to reconstruct the smaller objects and texture.
 
-Sufficiently Good k: [State your chosen k for Image 4 and why here]
-```
+**Sufficiently Good \(k\):**  
+I would choose \(k = 10\) for Image 4. The first few approximations are very blurred, but the major objects and contrast patterns become increasingly clear as \(k\) increases. At \(k = 10\), the approximation contains most of the large-scale visual structure of the original image even though some fine details are still lost. The error curve decreases sharply at small values of \(k\) and then begins to flatten, so increasing the rank beyond this point gives progressively smaller improvements.
