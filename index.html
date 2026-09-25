@@ -407,14 +407,13 @@ varies around a fairly constant level across the rows, with smaller
 fluctuations caused by the noise in the image. Together, the first
 eigenvector and first PC score capture the main vertical feature, while
 the random texture requires many additional principal components.</p>
-<p><strong>Sufficiently Good <span class="math inline">\(k\)</span>:</strong><br />
-I would choose approximately <span class="math inline">\(k = 90\)</span>
-for Image 1. The image contains a large amount of fine, noise-like
-texture, so the low-rank approximations capture the main vertical line
-but do not reproduce most of the texture. The approximation error also
-decreases gradually across almost the entire range of possible values of
-<span class="math inline">\(k\)</span>, rather than having a strong
-early elbow. Therefore, a relatively high rank is needed before the
+<p><strong>Sufficiently Good k:</strong><br />
+I would choose approximately k = 90 for Image 1. The image contains a
+large amount of fine, noise-like texture, so the low-rank approximations
+capture the main vertical line but do not reproduce most of the texture.
+The approximation error also decreases gradually across almost the
+entire range of possible values of k, rather than having a strong early
+elbow. Therefore, a relatively high rank is needed before the
 approximation becomes close to the original.</p>
 </div>
 <div id="section" class="section level3">
@@ -445,11 +444,11 @@ consistent with the strong horizontal bands visible in the image,
 because most of the variation occurs from one row to another. The first
 principal component therefore captures most of the overall horizontal
 stripe pattern.</p>
-<p><strong>Sufficiently Good <span class="math inline">\(k\)</span>:</strong><br />
-I would choose <span class="math inline">\(k = 2\)</span> for Image 2.
-The approximation error falls from about 2 at <span class="math inline">\(k = 1\)</span> to essentially zero at <span class="math inline">\(k = 2\)</span>, and the <span class="math inline">\(k = 2\)</span> approximation is visually
-indistinguishable from the original image. Increasing <span class="math inline">\(k\)</span> beyond 2 therefore provides essentially
-no improvement.</p>
+<p><strong>Sufficiently Good k:</strong><br />
+I would choose k = 2 for Image 2. The approximation error falls from
+about 2 at k = 1 to essentially zero at k = 2, and the k = 2
+approximation is visually indistinguishable from the original image.
+Increasing k beyond 2 therefore provides essentially no improvement.</p>
 </div>
 <div id="section-1" class="section level3">
 <h3>——————————————————————————–</h3>
@@ -481,16 +480,13 @@ indicates that the first principal component captures major regions of
 contrast associated with the cat and the background. Additional
 principal components gradually add the smaller details needed to make
 the cat sharper and more recognizable.</p>
-<p><strong>Sufficiently Good <span class="math inline">\(k\)</span>:</strong><br />
-I would choose <span class="math inline">\(k = 10\)</span> for Image 3.
-At small values such as <span class="math inline">\(k = 1\)</span> or
-<span class="math inline">\(k = 2\)</span>, only the broad structure of
-the image is visible. By <span class="math inline">\(k = 8\)</span> to
-<span class="math inline">\(k = 10\)</span>, the cat, its face, body,
-and surrounding background are clearly recognizable. The error curve
-also drops very rapidly for the first several principal components and
-then decreases more gradually, showing diminishing returns as additional
-components are added.</p>
+<p><strong>Sufficiently Good k:</strong><br />
+I would choose k = 10 for Image 3. At small values such as k = 1 or k =
+2, only the broad structure of the image is visible. By k = 8 to k = 10,
+the cat, its face, body, and surrounding background are clearly
+recognizable. The error curve also drops very rapidly for the first
+several principal components and then decreases more gradually, showing
+diminishing returns as additional components are added.</p>
 </div>
 <div id="section-2" class="section level3">
 <h3>——————————————————————————–</h3>
@@ -521,15 +517,14 @@ around the middle-to-lower part of the image. These patterns show that
 the first principal component is capturing the major light and dark
 regions of the scene. Additional principal components are needed to
 reconstruct the smaller objects and texture.</p>
-<p><strong>Sufficiently Good <span class="math inline">\(k\)</span>:</strong><br />
-I would choose <span class="math inline">\(k = 10\)</span> for Image 4.
-The first few approximations are very blurred, but the major objects and
-contrast patterns become increasingly clear as <span class="math inline">\(k\)</span> increases. At <span class="math inline">\(k = 10\)</span>, the approximation contains most
-of the large-scale visual structure of the original image even though
-some fine details are still lost. The error curve decreases sharply at
-small values of <span class="math inline">\(k\)</span> and then begins
-to flatten, so increasing the rank beyond this point gives progressively
-smaller improvements.</p>
+<p><strong>Sufficiently Good k:</strong><br />
+I would choose k = 10 for Image 4. The first few approximations are very
+blurred, but the major objects and contrast patterns become increasingly
+clear as k increases. At k = 10, the approximation contains most of the
+large-scale visual structure of the original image even though some fine
+details are still lost. The error curve decreases sharply at small
+values of k and then begins to flatten, so increasing the rank beyond
+this point gives progressively smaller improvements.</p>
 </div>
 </div>
 </div>

@@ -131,8 +131,8 @@ plot(
 **Eigenvector & PC Score:**  
 The first eigenvector is close to zero for most column positions but has a very large spike near column 80. This indicates that the dominant principal component is mostly associated with the strong vertical feature near that location in the original image. The first PC score varies around a fairly constant level across the rows, with smaller fluctuations caused by the noise in the image. Together, the first eigenvector and first PC score capture the main vertical feature, while the random texture requires many additional principal components.
 
-**Sufficiently Good \(k\):**  
-I would choose approximately \(k = 90\) for Image 1. The image contains a large amount of fine, noise-like texture, so the low-rank approximations capture the main vertical line but do not reproduce most of the texture. The approximation error also decreases gradually across almost the entire range of possible values of \(k\), rather than having a strong early elbow. Therefore, a relatively high rank is needed before the approximation becomes close to the original.
+**Sufficiently Good k:**  
+I would choose approximately k = 90 for Image 1. The image contains a large amount of fine, noise-like texture, so the low-rank approximations capture the main vertical line but do not reproduce most of the texture. The approximation error also decreases gradually across almost the entire range of possible values of k, rather than having a strong early elbow. Therefore, a relatively high rank is needed before the approximation becomes close to the original.
 
 ### --------------------------------------------------------------------------------
 
@@ -217,8 +217,8 @@ plot(
 **Eigenvector & PC Score:**  
 The first eigenvector changes smoothly across the columns, approximately following a steady trend from one side of the image to the other. In contrast, the first PC score changes rapidly across the rows. This is consistent with the strong horizontal bands visible in the image, because most of the variation occurs from one row to another. The first principal component therefore captures most of the overall horizontal stripe pattern.
 
-**Sufficiently Good \(k\):**  
-I would choose \(k = 2\) for Image 2. The approximation error falls from about 2 at \(k = 1\) to essentially zero at \(k = 2\), and the \(k = 2\) approximation is visually indistinguishable from the original image. Increasing \(k\) beyond 2 therefore provides essentially no improvement.
+**Sufficiently Good k:**  
+I would choose k = 2 for Image 2. The approximation error falls from about 2 at k = 1 to essentially zero at k = 2, and the k = 2 approximation is visually indistinguishable from the original image. Increasing k beyond 2 therefore provides essentially no improvement.
 
 ### --------------------------------------------------------------------------------
 
@@ -303,8 +303,8 @@ plot(
 **Eigenvector & PC Score:**  
 The first eigenvector varies smoothly across the columns and contains several broad peaks and valleys. These changes represent large-scale horizontal patterns in the image rather than individual fine details. The first PC score also changes smoothly across the rows, with a large peak over a central range of rows and lower values elsewhere. This indicates that the first principal component captures major regions of contrast associated with the cat and the background. Additional principal components gradually add the smaller details needed to make the cat sharper and more recognizable.
 
-**Sufficiently Good \(k\):**  
-I would choose \(k = 10\) for Image 3. At small values such as \(k = 1\) or \(k = 2\), only the broad structure of the image is visible. By \(k = 8\) to \(k = 10\), the cat, its face, body, and surrounding background are clearly recognizable. The error curve also drops very rapidly for the first several principal components and then decreases more gradually, showing diminishing returns as additional components are added.
+**Sufficiently Good k:**  
+I would choose k = 10 for Image 3. At small values such as k = 1 or k = 2, only the broad structure of the image is visible. By k = 8 to k = 10, the cat, its face, body, and surrounding background are clearly recognizable. The error curve also drops very rapidly for the first several principal components and then decreases more gradually, showing diminishing returns as additional components are added.
 
 ### --------------------------------------------------------------------------------
 
@@ -389,5 +389,5 @@ plot(
 **Eigenvector & PC Score:**  
 The first eigenvector has a large change in magnitude around the middle portion of the columns, showing that this region contributes strongly to the dominant pattern in the image. The first PC score contains several broad changes across the rows, including a particularly large change around the middle-to-lower part of the image. These patterns show that the first principal component is capturing the major light and dark regions of the scene. Additional principal components are needed to reconstruct the smaller objects and texture.
 
-**Sufficiently Good \(k\):**  
-I would choose \(k = 10\) for Image 4. The first few approximations are very blurred, but the major objects and contrast patterns become increasingly clear as \(k\) increases. At \(k = 10\), the approximation contains most of the large-scale visual structure of the original image even though some fine details are still lost. The error curve decreases sharply at small values of \(k\) and then begins to flatten, so increasing the rank beyond this point gives progressively smaller improvements.
+**Sufficiently Good k:**  
+I would choose k = 10 for Image 4. The first few approximations are very blurred, but the major objects and contrast patterns become increasingly clear as k increases. At k = 10, the approximation contains most of the large-scale visual structure of the original image even though some fine details are still lost. The error curve decreases sharply at small values of k and then begins to flatten, so increasing the rank beyond this point gives progressively smaller improvements.
